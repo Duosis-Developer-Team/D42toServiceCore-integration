@@ -18,10 +18,10 @@
         validate_certs: no
       register: devices_response
 
-    - name: Cihaz isimlerini ve ip adreslerini ayıkla
+    - name: Cihaz isimlerini ve IP adreslerini ayıkla
       set_fact:
-        device_name_ip_list: >
-          {{ devices_response.json.Devices | map('extract', ['name', 'ip_addresses']) | map('combine', [{'name': item.0, 'ip': (item.1[0].ip if item.1|length > 0 else '')}]) | list }}
+        device_name_ip_list: >-
+          {{ devices_response.json.Devices | map('extract', ['name', 'ip_addresses']) | map('combine', [{'name': item.0, 'ip': (item.1[0] if item.1|length > 0 else '')}]) | list }}
 
     - name: Workflow output olarak cihaz isimlerini ve ip adreslerini paylaş
       set_stats:
