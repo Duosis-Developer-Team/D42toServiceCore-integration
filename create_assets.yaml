@@ -19,7 +19,7 @@
         body:
           assetStatusId: "{{ asset_status_id }}"
           name: "{{ item.name }}"
-          ip: "{{ item.ip }}"
+          description: "IP Address: {{ item.ip }}"
           assetTypeId: "{{ asset_type_id }}"
         status_code: 200
       loop: "{{ device_name_ip_list }}"
