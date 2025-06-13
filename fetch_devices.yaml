@@ -1,0 +1,28 @@
+- name: Dış API'den cihazları çek ve paylaş
+  hosts: localhost
+  gather_facts: no
+  connection: local
+
+  tasks:
+    - name: Authorization token oluştur
+      set_fact:
+        d42_auth_header: "Basic {{ (d42_username + ':' + d42_password) | b64encode }}"
+
+    - name: Cihaz listesini dış API'den çek
+      uri:
+        url: "https://{{ d42_host }}:{{ d42_port }}/api/1.0/devices/all"
+        method: GET
+        headers:
+          Authorization: "{{ d42_auth_header }}"
+        return_content: yes
+        validate_certs: no
+      register: devices_response
+
+    - name: Cihaz isimlerini ayıkla
+      set_fact:
+        device_names: "{{ devices_response.json.Devices | map(attribute='name') | list }}"
+
+    - name: Workflow output olarak cihazları paylaş
+      set_stats:
+        data:
+          shared_device_names: "{{ device_names }}"
