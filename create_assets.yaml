@@ -1,12 +1,12 @@
-- name: Workflow output'tan cihazları al ve ServiceCore’a gönder
+- name: Workflow output'tan cihazları al ve ServiceCore'a gönder
   hosts: localhost
   gather_facts: no
   connection: local
 
   tasks:
-    - name: Fetch Devices çıktısından cihazları al
+    - name: Fetch Devices çıktısından cihaz isimlerini ve ip adreslerini al
       set_fact:
-        device_names: "{{ hostvars['localhost']['shared_device_names'] }}"
+        device_name_ip_list: "{{ hostvars['localhost']['shared_device_name_ip_list'] }}"
 
     - name: Her cihazı ServiceCore'a gönder
       uri:
@@ -18,9 +18,10 @@
         body_format: json
         body:
           assetStatusId: "{{ asset_status_id }}"
-          name: "{{ item }}"
+          name: "{{ item.name }}"
+          ip: "{{ item.ip }}"
           assetTypeId: "{{ asset_type_id }}"
         status_code: 200
-      loop: "{{ device_names }}"
+      loop: "{{ device_name_ip_list }}"
       loop_control:
-        label: "{{ item }}"
+        label: "{{ item.name }} | {{ item.ip }}"
